@@ -88,19 +88,10 @@ mark{
             topk: 20 //returns the k largest elements of the given input tensor along a given dimension
         };
         const predictions = await model.detect(img, options);
-        // console.log(predictions);
-
-        // Show the resulting object on the page.
-        //const pre = document.createElement('pre');
-        // pre.textContent = JSON.stringify(predictions, null, 2);
-        // document.body.append(pre);
 
         var img3 = document.getElementById('license-plate-image');
         var width = img3.clientWidth;
         var height = img3.clientHeight;
-
-        //log("Width: " + width);
-        //log("Height: " + height);
 
         var c = document.getElementById("canvas");
         var ctx = c.getContext("2d");
@@ -108,21 +99,6 @@ mark{
         ctx.canvas.height = height;
 
         var img3 = document.getElementById("license-plate-image");
-
-        /*
-        ctx.drawImage(img3, 0, 0, width, height);
-        // var canvas = document.getElementById('canvas');
-        //  var context = canvas.getContext('2d');
-
-        ctx.beginPath();
-        ctx.rect(predictions[0].box.left, predictions[0].box.top, predictions[0].box.width, predictions[0].box
-            .height);
-        ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-        ctx.fill();
-        ctx.lineWidth = 4;
-        ctx.strokeStyle = 'blue';
-        ctx.stroke();
-*/
 
 //check the predictions array and the previous element are truthy
 if(!!predictions && !!predictions[0] ){

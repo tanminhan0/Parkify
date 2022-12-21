@@ -16,8 +16,6 @@ var takeStill = function () {
     child.on('exit', function (code, signal) {
         console.log('Image Capture   ' + Date.now());
 
-
-
         async function setEndpoint() {
             //run google cloud vision component
             // Specifies the location of the api endpoint
@@ -30,10 +28,6 @@ var takeStill = function () {
             const [result] = await client.textDetection('./images/Cars1.png');
             const labels = result.textAnnotations;
             console.log('Text:');
-
-            //  labels.forEach(label => console.log(label.description));
-
-            //  console.log(labels);
 
             var license_number = null;
 
@@ -85,30 +79,11 @@ var takeStill = function () {
             console.log('readFileSync complete');
 
 
-
-
             takeStill();
-
-
 
 
         }
         setEndpoint();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     });
 }

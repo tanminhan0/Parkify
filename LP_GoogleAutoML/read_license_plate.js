@@ -26,7 +26,7 @@ async function setEndpoint() {
     labels.forEach(function (a, b) {
 
         //console.log(a.description);
-        //regex when string contains from A-Z 0-9
+        //regex to check description with the string contains from A-Z 0-9 and consists of 5 or more 
         if (/[A-Z0-9]{5,}/.test(a.description)) {
 
             // console.log(a.description.match(/[A-Z0-9]{5,}/));
