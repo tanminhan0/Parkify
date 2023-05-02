@@ -14,75 +14,24 @@ import { KeyboardAvoidingView} from "react-native";
 import { useState, useEffect } from "react";
 import {StripeProvider} from "@stripe/stripe-react-native"
 import Payment from "./components/Payment";
+import {configurePushNotifications } from './notifications'
+import moment from "moment/moment";
 
-const LINK = "https://f96e-77-75-244-148.eu.ngrok.io"
+const LINK = "https://af5a-77-75-244-156.ngrok-free.app"
 const Stack = createNativeStackNavigator();
 
 export default App = () => {
+  useEffect(() => {
+
+    configurePushNotifications();
+  }, []);
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            title: "Parkify Application",
-            headerStyle: {
-              backgroundColor: "lightcoral",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              fontWeight: "bold",
-              fontFamily: "Cochin",
-            },
-          }}
-        />
-        <Stack.Screen
-          name="View"
-          component={ViewScreen}
-          options={{
-            title: "Parking List",
-            headerStyle: {
-              backgroundColor: "green",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              fontWeight: "bold",
-            },
-          }}
-        />
-
-        <Stack.Screen
-          name="Calculate"
-          component={CalculateScreen}
-          options={{
-            title: "Calculate Parking Fee",
-            headerStyle: {
-              backgroundColor: "indianred",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              fontWeight: "bold",
-              fontFamily: "Cochin",
-            },
-          }}
-        />
-
-        <Stack.Screen
-          name="Checkout"
-          component={CheckoutScreen}
-          options={{
-            title: "Checkout Screen",
-            headerStyle: {
-              backgroundColor: "indianred",
-            },
-            headerTintColor: "#fff",
-            headerTitleStyle: {
-              fontWeight: "bold",
-              fontFamily: "Cochin",
-            },
-          }}
-        />
+        <Stack.Screen name="Home" component={HomeScreen} options={{ title: "Parkify Application", headerStyle: { backgroundColor: "lightcoral", }, headerTintColor: "#fff",  headerTitleStyle: { fontWeight: "bold", fontFamily: "Cochin", },  }} /> 
+        <Stack.Screen name="Calculate" component={CalculateScreen} options={{ title: "Calculate Parking Fee", headerStyle: {  backgroundColor: "indianred", }, headerTintColor: "#fff", headerTitleStyle: {  fontWeight: "bold",  fontFamily: "Cochin", }, }}/>
+        <Stack.Screen name="Payment" component={PaymentScreen} options={{ title: "Payment Screen", headerStyle: {  backgroundColor: "indianred", }, headerTintColor: "#fff", headerTitleStyle: {    fontWeight: "bold",    fontFamily: "Cochin",  },  }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -94,7 +43,7 @@ const HomeScreen = ({ navigation }) => {
   const searchAPI = async () => {
     try {
       const res = await fetch(
-        `https://f96e-77-75-244-148.eu.ngrok.io/getSpecificCar`,
+        `https://af5a-77-75-244-156.ngrok-free.app/getSpecificCar`,
         {
           method: "POST",
           headers: {
@@ -127,7 +76,7 @@ const HomeScreen = ({ navigation }) => {
         <Image source={logo} style={styles.logo} resizeMode="contain" />
       </View>
       <Text style={styles.homeTitle}>
-        Enter license plate to search and pay!
+        Enter license plate to search!
       </Text>
       <Text style={styles.homeBody}>License Plate: </Text>
       <TextInput
@@ -136,13 +85,6 @@ const HomeScreen = ({ navigation }) => {
         onChangeText={(newCarLP) => setCarLP(newCarLP)}
         value={carLP}
       />
-
-      {/* {input ? (
-        <View style={styles.card}>
-          <Text>Plate Number: {input?.[0]?.license_plate}</Text>
-          <Text>Entry Time: {input?.[0]?.timeEntry}</Text>
-        </View>
-      ) : null} */}
       <TouchableOpacity
         style={styles.inputButton}
         onPress={async () => searchAPI()}
@@ -158,7 +100,7 @@ const CalculateScreen = ({ navigation, route }) => {
   const updateAPI = async () => {
     try {
       const res = await fetch(
-        `https://f96e-77-75-244-148.eu.ngrok.io/updateSpecificCar`,
+        `https://af5a-77-75-244-156.ngrok-free.app/updateSpecificCar`,
         {
           method: "PUT",
           headers: {
@@ -174,7 +116,7 @@ const CalculateScreen = ({ navigation, route }) => {
       
       const data = await res.text();
       console.log(data);
-      navigation.navigate("Checkout", { car: car }); //Passing car data to the Checkout page
+      navigation.navigate("Payment", { car: car }); //Passing car data to the Payment page
    
     } catch (err) {
       console.log(err);
@@ -196,7 +138,7 @@ const CalculateScreen = ({ navigation, route }) => {
               Plate Number: {car?.[0]?.license_plate}
             </Text>
             <Text style={styles.cardText}>
-              Entry Time: {car?.[0]?.timeEntry}
+              Entry Time: {moment(car?.[0]?.timeEntry).format('YYYY/MM/DD HH:mm')}
             </Text>
           </View>
         </View>
@@ -211,7 +153,7 @@ const CalculateScreen = ({ navigation, route }) => {
   );
 };
 
-const CheckoutScreen = ({ navigation, route}) => {
+const PaymentScreen = ({ navigation, route}) => {
   var car = route.params.car;
   console.log('car object:', car);
 
@@ -222,125 +164,8 @@ const CheckoutScreen = ({ navigation, route}) => {
   );
 };
 
-const AddScreen = ({ navigation }) => {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const addAPI = async () => {
-    try {
-      const res = await fetch(`https://b9da-77-75-244-143.eu.ngrok.io/addCar`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "ngrok-skip-browser-warning": "69420",
-        },
-        body: JSON.stringify({
-          license_plate: name,
-        }),
-      });
-      const data = await res.json();
-      console.log(data);
-      Alert.alert("Success", "Car added successfully!", [
-        {
-          text: "OK",
-          onPress: () => {
-            setName("");
-            navigation.navigate("Home");
-          },
-        },
-      ]);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  return (
-    <View style={styles.addContainer}>
-      <Text style={styles.headerPage}>Enter license plate to add car!</Text>
-      <Text style={styles.bodyPage}>License Plate: </Text>
-      <TextInput
-        style={styles.inputAdd}
-        placeholder="Enter license plate here"
-        onChangeText={(newName) => setName(newName)}
-        value={name}
-      />
-      <Text style={styles.bodyPage}>Price: </Text>
 
-      <TouchableOpacity style={styles.addButton} onPress={() => addAPI()}>
-        <Text style={styles.buttonText}>Add Car!</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
-const ViewScreen = ({ navigation }) => {
-  const [list, setList] = useState(". . . waiting for button press");
-  const viewAPI = async () => {
-    try {
-      const res = await fetch(`https://b9da-77-75-244-143.eu.ngrok.io/`, {
-        method: "GET",
-        headers: {
-          "ngrok-skip-browser-warning": "69420",
-        },
-      });
-      const data = await res.json();
-      console.log(data);
-      setList(JSON.stringify(data));
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  return (
-    <View>
-      <Text>{list}</Text>
-      <Button
-        style={styles.button}
-        title="View List!"
-        onPress={async () => viewAPI()}
-      />
-    </View>
-  );
-};
-const DeleteScreen = ({ navigation }) => {
-  const [oid, setOid] = useState("");
-  const deleteAPI = async () => {
-    try {
-      const res = await fetch(
-        `https://b9da-77-75-244-143.eu.ngrok.io/deleteSpecificCar`,
-        {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-            "ngrok-skip-browser-warning": "69420",
-          },
-          body: JSON.stringify({
-            license_plate: oid,
-          }),
-        }
-      );
-      const data = await res.json();
-      console.log(data);
-      navigation.navigate("Home");
-    } catch (err) {
-      console.log(err);
-    }
-  };
-  return (
-    <View styles={styles.container}>
-      <Text>Enter license plate to remove from the parking list!</Text>
-      <Text>License Plate: </Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter the license plate here"
-        onChangeText={(newOid) => setOid(newOid)}
-        value={oid}
-      />
-      <Button
-        style={styles.button}
-        color="darkseagreen"
-        title="Remove Item"
-        onPress={async () => deleteAPI()}
-      />
-    </View>
-  );
-};
+
 
 const styles = StyleSheet.create({
   homeTitle: {
