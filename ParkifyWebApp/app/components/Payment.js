@@ -3,7 +3,6 @@ import {
   Text,
   TouchableOpacity,
   Alert,
-  ScrollView,
   StyleSheet,
   Image,
   KeyboardAvoidingView,
@@ -11,15 +10,17 @@ import {
 import React from "react";
 import { useStripe } from "@stripe/stripe-react-native";
 import moment from "moment/moment";
+import {sendPushNotificationHandler } from '../notifications'
+
 const logo = require("../assets/logo.png");
 
 const Payment = (props) => {
   const stripe = useStripe();
   const car = props.car[0];
-
+  console.log(car.license_plate);
   const payAPI = async () => {
     try {
-      const res = await fetch(`https://f96e-77-75-244-148.eu.ngrok.io/pay`, {
+      const res = await fetch(`https://af5a-77-75-244-156.ngrok-free.app/pay`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +28,6 @@ const Payment = (props) => {
         },
         body: JSON.stringify({
           parkingFee: car.parkingFee * 100, //10euro in unit of cents
-          //paymentStatus : boolean? status?//ADDING STATUS TO CHECK IT PAY OR NOT
         }),
       });
 
@@ -49,9 +49,23 @@ const Payment = (props) => {
       });
       if (presentSheet.error) return Alert.alert(presentSheet.error.message);
       Alert.alert("Payment complete, thank you!");
+      //update payment in database
+      const res2 = await fetch(`https://af5a-77-75-244-156.ngrok-free.app/updatePaymentStatus`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "69420",
+        },
+        body: JSON.stringify({
+          license_plate: car.license_plate,
+        }),
+      });
+      const data2 = await res2.json();
+      console.log(data2);
     } catch (err) {
       console.log(err);
     }
+    sendPushNotificationHandler();
   };
   return (
     <KeyboardAvoidingView
