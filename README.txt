@@ -8,7 +8,9 @@ PARKIFY
 
 sudo su - (To get into root)
 
-# Execute Script
+# Execute Script to enable the camera capture images
 GOOGLE_APPLICATION_CREDENTIALS="/var/www/html/alpr/gcp-key.json" node image-capture.js
 
+Run EC2 instances npm start in the backend database folder
 
+View database on MongoDB Atlas platform 
