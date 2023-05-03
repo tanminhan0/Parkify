@@ -1,0 +1,9 @@
+nodemodules/
+.expo/
+*dist/
+*npm-debug.*
+*.key
+*.jks
+*.orig.*
+.env
+
